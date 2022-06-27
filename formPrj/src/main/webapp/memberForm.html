@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>memberForm 폼은 name 으로 파라메터 넘김서브밋 member 방법 get 인풋밸류가 cmd = " "
+<input type="hidden" name="cmd" value="update">
+	회원번호:<input type="number" name="no"><br>
+	연락처:<input type="text" name="ph"><br>
+	<input type="submit" value="전송"><br>
+	
+	<input type="hidden" name="cmd" value="insert">
+	회원이름추가:<input type="text" name="name"><br>
+	회원주소추가:<input type="text" name="addr"><br>
+	<input type="submit" value="전송"><br>
+	
+	<input type="hidden" name="cmd" value="delete">
+	회원삭제:<input type="number" name="delnumber"><br>
+	<input type="submit" value="전송">
+</title>
+</head>
+<body>
+	<form name="saveForm" action="member" method="get"> 	
+	
+	<input type="hidden" name="cmd" value="update">
+	회원번호:<input type="number" name="no"><br>
+	연락처:<input type="text" name="ph"><br>
+	<input type="submit" value="전송"><br>
+	
+	</form>
+	<script>
+	let xhtp = new XMLHttpRequest(); // 비동기방식
+	xhtp.open('get','member?cmd=insert&name=Ajax&addr=incheon'); // 2개의 파라메타 get 또는 post
+	xhtp.send();
+	xhtp.onload = function(){
+		console.log(xhtp.responseText);
+	}
+	
+	</script>
+</body>
+</html>
