@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>promise.html</title>
+</head>
+
+<body>
+	<div id="show">
+		<table border="1">
+			<thead>
+				<tr>
+					<th>회원번호</th>
+					<th>회원이름</th>
+					<th>연락처</th>
+					<th>주소</th>
+					<th>생년월일</th>
+					<th>사진</th>
+					<th>삭제</th>
+					<th>선택삭제</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+        // promise 객체 => fetch : pending, fullfilled, rejected , then(), catch()
+        let promise = new Promise(function (resolve, reject) { // 개체 안에 매개값으로 함수가 들어감 (정상적인 실행 콜백함수 , 정상 실행 못했을때 콜백함수)
+            setTimeout2(function () {
+                resolve('success'); // 성공 처리 실행할 콜백함수.
+            }, 1000);
+        });
+
+        promise
+            .then(function (result) {
+                console.log(result);
+            })
+            .catch(function (error) {
+                console.error(error);
+            })
+
+        function asyncWork(value) { // promise 인스턴스를 반환하는 함수 asyncWork
+            return new Promise(function (resolve, reject) {
+                setTimeout(function () {
+                    value -= 20;
+                    if (value > 50) {
+                        resolve(value); // resolve
+                    } else {
+                        reject(value); // reject
+                    }
+                }, 1000);
+            });
+        }
+
+        asyncWork(100) // then 정상처리 후 2번째 then 실행
+            .then(function (value) {
+                console.log(value);
+                return asyncWork(value);
+            })
+            .then(function (value) {
+                console.log(value);
+                return asyncWork(value);
+            })
+            .then(function (value) {
+                console.log(value);
+                return asyncWork(value);
+            })
+            .catch(function (error) {
+                console.log('catch' + error);
+            })
+
+        fetch('member?cmd=list') // json (키와 벨류를 갖고있는 텍스트형식)
+            .then(function(result){
+                return result.json(); // text -> .json() 메소드로 json타입으로 만들겠다
+            })
+            .then(function(result) {
+            	let tbody = document.querySelector('#show tbody');
+            	result.forEach(member => {
+            			tbody.append(makeTr(member));		
+            	})
+            })
+            .catch(function (error) {
+                console.error(error);
+            })
+        
+        let fields = ['membNo', 'membName','membPhone','membAddr','membBirth','membImage'];
+        // 회원정보 => tr 생성
+
+        function makeTr(member) { 
+        	let tr = document.createElement('tr');
+        	tr.setAttribute('id', member.membNo); // tr의 attribute 중에 id를 활용.
+        	// tr.addEventListener('click', showDetail );
+        	fields.forEach(field => {  // 배열에 있는 갯수만큼 반복하겠습니다
+        		let td = document.createElement('td');
+        	// null, 0, undefined, '' => false 이외 true
+        		td.innerHTML = member[field] ? member[field] : (!'' ? field == 'membImage' ? 'no img' : '' : '' ); // 공란이 아니면 필드에 이미지 있나 물어보고 없으면 노이미지, 아니면 '', 그 이외의것은 '' 
+        		// 참이면 앞에값 아니면 뒤의값을 실행하겠다는 삼항연산자. 없으면 이미지와 그 이외의 항목들과 구분하고싶음 없는 값 중에서 맴버이미지 속성이면, 이미지 항목이면 'no img' 나머지 항목이면 ''  // 삼항연산자 뒤가 없으면 undifined 값이나옴.
+        		tr.append(td);
+        	})
+        	
+        	// 삭제버튼 
+        	let btn = document.createElement('button');
+        	btn.innerHTML = '삭제';
+        	// btn.addEventListener('click', rowDelete, false); // 이벤트 전파방식으로 3번째 값을 줄 수 있는데 하위요소에서 상위요소로 가는 default false 버블링
+        	let td = document.createElement('td');
+        	td.append(btn);
+        	tr.append(td);
+        	
+        	// 체크박스 input type ='checkbox'
+        	let checkbox = document.createElement('input');
+        	checkbox.setAttribute('type','checkbox');
+        	// checkbox.addEventListner('checked', false);
+        	td = document.createElement('td');
+        	td.append(checkbox);
+        	tr.append(td);
+      	
+        	return tr;
+        }
+    </script>
+</body>
+
+</html>
