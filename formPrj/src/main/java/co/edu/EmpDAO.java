@@ -7,7 +7,53 @@ import java.util.List;
 import java.util.Map;
 
 public class EmpDAO extends DAO {
-
+	
+	// 입력기능
+	public boolean insertSchedule(CalendarVO vo) { //  CalendarVO 클래스를 매개값으로 받음
+		// 정상적으로 1건 입력 : true.
+		// 예외, 0건 : false
+		getConnect();
+		String sql = "insert into full_calendar values (?,?,?)";
+		try {
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, vo.getTitle());
+			psmt.setString(2, vo.getStartDate());
+			psmt.setString(3, vo.getEndDate());
+			int r = psmt.executeUpdate(); // 수정된 건수를 반환.
+			if (r > 0) {
+				return true; // 정상적으로 변경.
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}  finally {
+			disconnect();
+		}
+			return false;
+	}
+	
+	// 삭제기능
+	public boolean deleteSchedule(CalendarVO vo) {
+		getConnect();
+		String sql = "delete from full_calendar where title = ? ";
+		try {
+			psmt = conn.prepareStatement(sql);
+			psmt.setString(1, vo.getTitle());
+			
+			int r = psmt.executeUpdate(); // 수정된 건수를 반환.
+			if (r > 0) {
+				return true; // 정상적으로 변경.
+			}
+			
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}finally {
+			disconnect();
+		}
+			return false;
+	}
+		
+	
 	// 일정정보
 	public List<CalendarVO> getSchedule() {
 		// 전체 일정 정보를 가지고 오도록 메소드를 완성하세요
@@ -19,9 +65,9 @@ public class EmpDAO extends DAO {
 			rs = psmt.executeQuery(); // 쿼리실행한걸 rs에 씀
 			while (rs.next()) {
 				CalendarVO cal = new CalendarVO();
-				cal.setTitle(rs.getString("title")); // 1 
-				cal.setStartDate(rs.getString("start_date")); // 2
-				cal.setEndDate(rs.getString("end_date")); // 3
+				cal.setTitle(rs.getString(1)); // 1 
+				cal.setStartDate(rs.getString(2)); // 2
+				cal.setEndDate(rs.getString(3)); // "end_date"
 				calen.add(cal);
 			}
 		} catch (SQLException e) {

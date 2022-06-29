@@ -7,6 +7,7 @@
 </head>
 
 <body>
+
 	<div id="show">
 		<table border="1">
 			<thead>
@@ -72,7 +73,7 @@
                 console.log('catch' + error);
             })
 
-        fetch('member?cmd=list') // json (키와 벨류를 갖고있는 텍스트형식)
+        fetch('member?com=list') // json (키와 벨류를 갖고있는 텍스트형식)
             .then(function(result){
                 return result.json(); // text -> .json() 메소드로 json타입으로 만들겠다
             })
@@ -119,6 +120,7 @@
       	
         	return tr;
         }
+        
     </script>
 </body>
 

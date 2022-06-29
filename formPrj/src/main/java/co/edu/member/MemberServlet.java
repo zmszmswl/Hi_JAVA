@@ -87,13 +87,12 @@ public class MemberServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// 한글 처리.
-		request.setCharacterEncoding("utf-8");
+		// request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		response.setContentType("text/json;charset=utf-8");
 		
 		// post 방식의 요청이 되면 실행할 메소드.
 		String cmd = request.getParameter("cmd");
-		
 		String membName = request.getParameter("name");
 		String membAddr = request.getParameter("addr");
 		String membPhon = request.getParameter("phone");

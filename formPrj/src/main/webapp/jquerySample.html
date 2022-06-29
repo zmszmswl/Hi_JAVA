@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>jquerySample.html</title>
+<script src="./jquery/jquery-3.6.0.js"></script>
+<script>
+	// 자바스트립트 기능 구현 jquery 제공하는 api를 이용해서 기능구현
+	document.addEventListener('DOMContentLoaded', function(){
+	
+	let furu = [{f : "apple"}, { f : "banana"}];
+	
+	let ul = document.createElement('ul');
+	
+	furu.forEach(elem => {
+	let li = document.createElement('li');
+	li.setAttribute('id', elem.sno); 
+	let txt = document.createTextNode(elem.f);
+	li.appendChild(txt);
+	ul.appendChild(li);
+	document.getElementById('show').appendChild(ul);
+	
+});
+	
+	
+	// jquery 방식. $('선택자 or 태그')
+	let ulTag = $('<ul>').append($('<li>').html('Apple') // <li>Apple</li>
+								,$('<li>').html('Banana'));
+	
+	$('#show').append(ulTag);
+	//$('#show ul:nth-child(3)').remove();
+	})
+	
+</script>
+</head>
+<body>
+	<div id ="show">
+	<ul>
+	<li>Apple</li>
+	<li>Banana</li>
+	</ul>
+	</div>
+</body>
+</html>
