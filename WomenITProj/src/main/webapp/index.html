@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>도서정보 <form action="member" name="memberFrm"></title>
+  
+    <style>
+  
+    </style>
+    
+</head>
+<style>
+
+</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src = "upload_jquery.js" ></script>
+
+<body>
+
+	<form action="BookServ" name="bookFrm" method="post" >
+	
+		<label for="bookNo">도서코드</label> 
+		<input type="text"name="bookNo" id="bookNo"><br> 
+		
+		<label for="bookName">도서명</label> 
+		<input type="text" name="bookName"id="bookName"><br> 
+		
+		<label for="writer">저자<label> 
+		<input type="text" name="writer" id="writer"><br> 
+		
+		<label for="publisher">출판사</label> 
+		<input type="text" name="publisher" id="publisher"><br>  
+		
+
+		<label for="money">금액</label> 
+		<input type="text" name="money" id="money"><br>
+        
+        <input type="submit" value="저장"> 
+        <input type="button" value="선택삭제" id="deleteSel">
+
+	</form>
+	
+    <div id="show">
+		<table border="1">
+			<thead>
+				<tr>
+					<th>선택삭제</th>
+					<th>도서코드</th>
+					<th>도서명</th>
+					<th>저자</th>
+					<th>출판사</th>
+					<th>가격</th>
+					<th>삭제</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<script>
+	 
+	// 리스트 출력.
+	  
+    let ajax = new XMLHttpRequest();
+    ajax.open('get','BookServ?cmd=list');
+    ajax.send();
+    ajax.onload = function() {
+    	let data = JSON.parse(this.responseText)
+    	
+    	let tbody = document.querySelector('#show tbody');
+    	data.forEach(member => {
+    			tbody.append(makeTr(member));		
+    	})
+    }
+ // 저장버튼 클릭.
+    document.forms.bookFrm.addEventListener('submit', function(e){
+    	e.preventDefault();
+    	console.log(this);
+  		let bk = this.bookNo.value; // form 태그의 하위에 존재하는 것들
+  		let bn = this.bookName.value;
+  		let wt = this. writer.value;
+  		let pb = this.publisher.value;
+  		let mo = this.money.value;
+  		
+  		let xhtp = new XMLHttpRequest();
+  		xhtp.open('post','BookServ'); // 요청방식 post : 매개값이 몸체에 담겨 넘어감.
+  		xhtp.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+  		xhtp.send(`bookNo=${bk}&bookName=${bn}&writer=${wt}&publisher=${pb}&money=${mo}&cmd=add`);
+   		xhtp.onload = function() { 
+   			console.log(this.responseText);
+   			let result = JSON.parse(this.responseText);
+   			document.querySelector('#show tbody').append(makeTr(result));
+   		}
+    })
+    
+    
+    // 회원정보 => tr 생성
+    let fields = ['bookNo', 'bookName','writer','publisher','money'];
+    
+    function makeTr(member) { 
+    	let tr = document.createElement('tr');
+    	tr.setAttribute('id', member.bookNo); 
+    	// 체크박스 input type ='checkbox'
+    	let td = document.createElement('td');
+    	let checkbox = document.createElement('input');
+    	checkbox.setAttribute('type','checkbox');
+    	// checkbox.addEventListner('checked', false);
+    	td.append(checkbox);
+    	tr.append(td);
+    	
+    	fields.forEach(field => {  
+    		let td = document.createElement('td');
+    		td.innerHTML = member[field] ? member[field] : (!'' ? field == 'bookNo' ? '도서번호없음' : '' : '' ); 
+    		tr.append(td);
+    	})
+    		
+    	// 삭제버튼 
+    	td = document.createElement('td');
+    	let btn = document.createElement('button');
+    	btn.innerHTML = '삭제';
+    	btn.addEventListener('click', rowDelete, false); // 이벤트 전파방식으로 3번째 값을 줄 수 있는데 하위요소에서 상위요소로 가는 default false 버블링
+    	td.append(btn);
+    	tr.append(td);
+  	
+    	return tr;
+    }
+    
+    //console.log(this.parentElement.parentElement.getAttribute('id'));
+	//console.log(delAjax);
+	
+    // 삭제 버튼 실행 콜백함수.
+    function rowDelete() {
+    	let delId = this.parentElement.parentElement.getAttribute('id');
+    	let delAjax = new XMLHttpRequest();
+    	delAjax.open('post', 'BookServ');
+    	delAjax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    	delAjax.send(`cmd=remove&delNo=${delId}`);
+    	delAjax.onload = function(){
+    		let result = JSON.parse(delAjax.responseText); // {retCode : Success / Fail}
+    		if (result.retCode == 'Success'){
+    			alert('정상적으로 처리되었습니다')
+    			document.getElementById(delId).remove();	
+    		}else {
+    			alert('처리중 에러 발생!!')
+    		}
+    	}
+    }
+ 
+    // 선택삭제.
+    document.getElementById('deleteSel').addEventListener('click', deleteSelected);
+    
+    // 선택삭제 콜백함수.
+    function deleteSelected() {
+    	// 체크 true
+    	let checkAll = document.querySelectorAll('table > tbody > tr > td > input:checked');
+    	// checkAll.forEach(elem => console.log(elem));
+ 	checkAll.forEach(elem => {
+    	let delId = elem.parentElement.parentElement.getAttribute('id');
+    	// ajax 호출 : db삭제 및 화면에서 삭제
+    	let delAjax = new XMLHttpRequest();
+    	delAjax.open('post', 'BookServ');
+    	delAjax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    	delAjax.send(`cmd=remove&delNo=${delId}`);
+    	delAjax.onload = function(){
+    		let result = JSON.parse(delAjax.responseText); // {retCode : Success / Fail}
+    		// 결과값 Success
+    		if (result.retCode == 'Success'){
+    			alert('정상적으로 처리되었습니다')
+    			document.getElementById(delId).remove();	
+    		}else {
+    			alert('처리중 에러 발생!!')
+    		}
+    		}
+		 });
+    }
+	</script>
+</body>
+</html>

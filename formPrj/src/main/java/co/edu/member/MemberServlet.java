@@ -40,12 +40,12 @@ public class MemberServlet extends HttpServlet {
 		MemberDAO dao = new MemberDAO();
 		
 		
-		if (cmd.equals("list")) { // http://localhost/formPrj/member?cmd=list
+		if (cmd.equals("list")) { // 조회 http://localhost/formPrj/member?cmd=list
 			// 전체 리스트 => json 화면 보여주기. 
 			List<MemberVO> list = dao.memberList();// 전체 건수를 리턴해주는 메소드의 주소값을 list 변수값으로 받아옴 
 			response.getWriter().print(gson.toJson(list));
 			
-		} else if (cmd.equals("insert")) {
+		} else if (cmd.equals("insert")) { // 추가
 			String name = request.getParameter("name");
 			String addr = request.getParameter("addr");
 			
@@ -55,7 +55,7 @@ public class MemberServlet extends HttpServlet {
 			dao.insertMember(vo);
 			response.getWriter().print(gson.toJson(vo));
 			
-		} else if (cmd.equals("update")) {
+		} else if (cmd.equals("update")) { // 업데이트
 			// 19 - 전화번호
 			String numb = request.getParameter("no"); // 파라메터 이름과 변수 이름을 달리해도 괜찮다.
 			String phone = request.getParameter("ph");
@@ -72,7 +72,7 @@ public class MemberServlet extends HttpServlet {
 				response.getWriter().print("{\"retCode\" : \"Fail\"}");
 			}
 		
-		} else if (cmd.equals("delete")) { // 
+		} else if (cmd.equals("delete")) { // 삭제
 			String delNo = request.getParameter("delNumber");
 			if(dao.deleteMember(Integer.parseInt(delNo))) {
 				response.getWriter().print("{\"retCode\" : \"Success\"}");
@@ -87,12 +87,12 @@ public class MemberServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// 한글 처리.
-		// request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		response.setContentType("text/json;charset=utf-8");
 		
 		// post 방식의 요청이 되면 실행할 메소드.
 		String cmd = request.getParameter("cmd");
+		
 		String membName = request.getParameter("name");
 		String membAddr = request.getParameter("addr");
 		String membPhon = request.getParameter("phone");
@@ -117,7 +117,7 @@ public class MemberServlet extends HttpServlet {
 		// 1. 입력
 		if(cmd.equals("add")) {
 			dao.insertMember(vo);
-			out.print(gson.toJson(vo)); // json
+			out.print(gson.toJson(vo)); // json타입으로 변경
 			
 			// 2. 수정
 		} else if (cmd.equals("modify")) {
@@ -138,7 +138,6 @@ public class MemberServlet extends HttpServlet {
 				obj.addProperty("retCode", "Success");
 				
 			} else {
-				
 				obj.addProperty("retCode", "Fail");
 			}
 			System.out.println(gson.toJson(obj));

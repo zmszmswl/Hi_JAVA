@@ -35,11 +35,14 @@ public class memberUpload extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
+		response.setCharacterEncoding("utf-8");
+		response.setContentType("text/json;charset=utf-8");
+
+		
 		boolean isMulti = ServletFileUpload.isMultipartContent(request);
 		
 		if (isMulti) {
 			
-		
 		String mn = request.getParameter("memberName"); // application/ x-www-form-urlencoded => multipart/form-data
 	
 		String file = request.getServletContext().getRealPath("images");
@@ -50,7 +53,7 @@ public class memberUpload extends HttpServlet {
 				"UTF-8", // 인코딩타입
 				new DefaultFileRenamePolicy() ); // 리네임 정책
 		mn = mr.getParameter("memberName");
-		String ph = mr.getParameter("Phone");
+		String ph = mr.getParameter("phone");
 		String ad = mr.getParameter("address");
 		String bi = mr.getParameter("birth");
 		String im = mr.getParameter("image"); 
@@ -69,7 +72,9 @@ public class memberUpload extends HttpServlet {
 		
 		dao.insertMember(vo);
 		//{"retCode":"Fullfilled"}
-		out.print("{\"retCode\":\"Fullfilled\"}");
+		// out.print("{\"retCode\":\"Fullfilled\"}");
+		
+		out.print(gson.toJson(vo));
 		
 		} else {
 			String cmd = request.getParameter("cmd");

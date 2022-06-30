@@ -125,7 +125,7 @@ public class MemberDAO extends co.edu.DAO {
 	public MemberVO searchMember(int membNo) {
 		getConnect();
 		MemberVO mem = null; // 클래스 인스턴스 만들어서 초기값을 null줌 참조변수		
-		String sql = "select * from member where memb_no = ?";
+		String sql = "select * from member where memb_no = ?"; // 오라클에서 sql 쿼리 테스트후  가져오기
 		
 		try {
 			psmt = conn.prepareStatement(sql);
