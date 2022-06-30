@@ -40,14 +40,8 @@ public class BookVO {
 		this.money = money;
 	}
 	
-	@Override
-	public String toString() {
-		return "BookVO [bookNo=" + bookNo + ", bookName=" + bookName + ", writer=" + writer + ", publisher=" + publisher
-				+ ", money=" + money + "]";
-	}
-
-
 	
+
 	
 	
 }
